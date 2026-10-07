@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text-to-Speech using ElevenLabs</title>
+    <!-- Modern typography via Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background visual glow effects -->
+    <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+
+    <div class="app-container">
+        <!-- ================================================================ -->
+        <!-- HEADER SECTION                                                   -->
+        <!-- ================================================================ -->
+        <header class="app-header">
+            <div class="header-badge">
+                <span class="badge-dot"></span>
+                <span>ElevenLabs API Demo</span>
+            </div>
+            
+            <h1 class="main-title">
+                AI Text-to-Speech
+            </h1>
+
+            <p class="main-description">
+                Convert written text into ultra-realistic, natural spoken audio powered by ElevenLabs' leading generative AI voice models.
+            </p>
+
+            <!-- API Status Indicator (shows if server & API key are configured) -->
+            <div id="statusBanner" class="status-banner loading" role="status">
+                <span class="status-indicator"></span>
+                <span id="statusText">Checking server status...</span>
+            </div>
+        </header>
+
+        <!-- ================================================================ -->
+        <!-- MAIN INTERACTIVE CARD                                            -->
+        <!-- ================================================================ -->
+        <main class="card tts-card">
+            
+            <!-- Quick Preset Buttons (helpful for quick classroom demos) -->
+            <div class="presets-row">
+                <span class="presets-label">Sample Texts:</span>
+                <button type="button" class="preset-btn" data-text="Welcome to our University Computer Science lab! Today we are exploring artificial intelligence and neural text-to-speech synthesis with ElevenLabs.">
+                    🎓 Academic Demo
+                </button>
+                <button type="button" class="preset-btn" data-text="The universe is under no obligation to make sense to you. Curiosity and perseverance are what lead to extraordinary scientific breakthroughs.">
+                    ✨ Inspiration
+                </button>
+                <button type="button" class="preset-btn" data-text="Deep in the enchanted forest, ancient trees whispered secrets of a forgotten civilization beneath a canopy of emerald leaves.">
+                    🌲 Storytelling
+                </button>
+                <button type="button" class="preset-btn preset-clear" id="clearTextBtn" title="Clear text field">
+                    ✕ Clear
+                </button>
+            </div>
+
+            <!-- Form starts -->
+            <form id="ttsForm" novalidate>
+
+                <!-- Textarea Input Area -->
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="textInput" class="form-label">
+                            Text to Narrate <span class="required-star">*</span>
+                        </label>
+                        <span id="charCount" class="char-count">0 / 3000 chars</span>
+                    </div>
+
+                    <textarea 
+                        id="textInput" 
+                        name="text"
+                        class="text-area" 
+                        rows="6" 
+                        placeholder="Type or paste your text here to convert it into speech..."
+                        maxlength="3000"
+                        required></textarea>
+                </div>
+
+                <!-- Controls: Model Selection and Voice Selection -->
+                <div class="controls-grid">
+                    
+                    <!-- 1. ElevenLabs Model Dropdown -->
+                    <div class="form-group">
+                        <label for="modelSelect" class="form-label">
+                            ElevenLabs Model <span class="required-star">*</span>
+                        </label>
+                        <div class="select-wrapper">
+                            <select id="modelSelect" name="model" class="select-input">
+                                <option value="eleven_multilingual_v2" selected>
+                                    Eleven Multilingual v2 (High Quality, 29 Languages)
+                                </option>
+                                <option value="eleven_flash_v2_5">
+                                    Eleven Flash v2.5 (Lowest Latency, Realtime)
+                                </option>
+                                <option value="eleven_turbo_v2_5">
+                                    Eleven Turbo v2.5 (Fast & Natural)
+                                </option>
+                                <option value="eleven_monolingual_v1">
+                                    Eleven English v1 (Classic English Voice Model)
+                                </option>
+                            </select>
+                            <span class="select-arrow" aria-hidden="true">▼</span>
+                        </div>
+                        <p class="field-hint">
+                            Select the neural voice model used to generate spoken audio.
+                        </p>
+                    </div>
+
+                    <!-- 2. ElevenLabs Voice Selection -->
+                    <div class="form-group">
+                        <label for="voiceSelect" class="form-label">
+                            Speaker Voice
+                        </label>
+                        <div class="select-wrapper">
+                            <select id="voiceSelect" name="voice" class="select-input">
+                                <option value="Xb7hH8MSUJpSbSDYk0k2" selected>Alice (Clear, Engaging Educator - Female)</option>
+                                <option value="JBFqnCBsd6RMkjVDRZzb">George (Warm, Captivating Storyteller - Male)</option>
+                                <option value="EXAVITQu4vr4xnSDxMaL">Sarah (Mature, Reassuring, Confident - Female)</option>
+                                <option value="CwhRBWXzGAHq8TQ4Fs17">Roger (Laid-Back, Casual, Resonant - Male)</option>
+                                <option value="cgSgspJ2msm6clMCkdW9">Jessica (Playful, Bright, Warm - Female)</option>
+                                <option value="nPczCjzI2devNBz1zQrb">Brian (Deep, Resonant, Comforting - Male)</option>
+                                <option value="pNInz6obpgDQGcFmaJgB">Adam (Dominant, Firm, Narrator - Male)</option>
+                                <option value="pFZP5JQG7iQjIQuC4Bku">Lily (Velvety, Expressive Actress - Female)</option>
+                                <option value="bIHbv24MWmeRgasZH58o">Will (Relaxed, Friendly Optimist - Male)</option>
+                                <option value="onwK4e9ZLuTAKqWW03F9">Daniel (Steady, Authoritative Broadcaster - Male)</option>
+                            </select>
+                            <span class="select-arrow" aria-hidden="true">▼</span>
+                        </div>
+                        <p class="field-hint">
+                            Choose the voice persona for the generated narration.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Action Button: Generate Speech -->
+                <div class="action-row">
+                    <button type="submit" id="generateBtn" class="btn btn-primary">
+                        <span class="btn-icon" id="btnIcon">▶</span>
+                        <span id="btnText">Generate Speech</span>
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-state hidden" aria-live="polite">
+                <div class="spinner"></div>
+                <div class="loading-content">
+                    <p class="loading-title">Synthesizing Voice Audio...</p>
+                    <p class="loading-subtitle">ElevenLabs AI is processing your text. This usually takes 1–3 seconds.</p>
+                </div>
+            </div>
+
+            <!-- Error Message Display Area -->
+            <div id="errorArea" class="error-banner hidden" role="alert">
+                <span class="error-icon">⚠️</span>
+                <div class="error-content">
+                    <strong class="error-title">Generation Error</strong>
+                    <p id="errorMessage" class="error-message">An unexpected error occurred.</p>
+                </div>
+                <button type="button" id="dismissErrorBtn" class="btn-dismiss" aria-label="Dismiss error">✕</button>
+            </div>
+
+            <!-- Success Audio Player Area -->
+            <div id="audioSection" class="audio-section hidden">
+                <div class="audio-header">
+                    <div class="audio-info">
+                        <span class="audio-badge">✓ Audio Ready</span>
+                        <span id="audioMetadata" class="audio-meta">Model: Eleven Multilingual v2</span>
+                    </div>
+
+                    <!-- Direct Download Button for the generated MP3 -->
+                    <a id="downloadAudioBtn" class="btn-download" download="elevenlabs-speech.mp3" href="#" title="Download generated MP3">
+                        ⬇ Download MP3
+                    </a>
+                </div>
+
+                <!-- Waveform animation effect while audio is playing -->
+                <div id="waveformVisualizer" class="waveform-container" aria-hidden="true">
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                    <span class="wave-bar"></span>
+                </div>
+
+                <!-- HTML5 Audio Player -->
+                <div class="player-wrapper">
+                    <audio id="audioPlayer" controls preload="auto" class="native-audio-player">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- ================================================================ -->
+        <!-- EDUCATIONAL FOOTER & ARCHITECTURE EXPLANATION                    -->
+        <!-- ================================================================ -->
+        <footer class="app-footer">
+            <div class="how-it-works-card">
+                <h3>💡 How This Application Works (Security Architecture)</h3>
+                <div class="steps-grid">
+                    <div class="step-box">
+                        <span class="step-num">1</span>
+                        <h4>Frontend (Browser)</h4>
+                        <p>User enters text and selects a voice model. On click, sends a clean request to our local Express server.</p>
+                    </div>
+                    <div class="step-box">
+                        <span class="step-num">2</span>
+                        <h4>Backend (Secure Proxy)</h4>
+                        <p>Express server loads the private <code>ELEVENLABS_API_KEY</code> from <code>.env</code> and calls ElevenLabs API.</p>
+                    </div>
+                    <div class="step-box">
+                        <span class="step-num">3</span>
+                        <h4>ElevenLabs AI</h4>
+                        <p>ElevenLabs neural network synthesizes speech and streams back raw MP3 audio directly to our player.</p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="footer-credit">
+                Built for Computer Science Classroom Activities • Powered by <a href="https://elevenlabs.io" target="_blank" rel="noopener">ElevenLabs API</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Frontend Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

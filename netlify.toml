@@ -1,0 +1,27 @@
+# ==============================================================================
+# Netlify Deployment Configuration
+# ==============================================================================
+
+[build]
+  # Serve static files from the public folder
+  publish = "public"
+  # Folder where serverless functions reside
+  functions = "netlify/functions"
+
+# Route /api/tts to the Netlify serverless function
+[[redirects]]
+  from = "/api/tts"
+  to = "/.netlify/functions/tts"
+  status = 200
+
+# Route /api/status to the Netlify serverless function
+[[redirects]]
+  from = "/api/status"
+  to = "/.netlify/functions/status"
+  status = 200
+
+# Single-Page-App fallback rule
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
